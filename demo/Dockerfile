@@ -8,7 +8,7 @@ COPY demo/build.gradle demo/settings.gradle ./
 COPY demo/src ./src
 
 # Build the application
-RUN gradle build --no-daemon
+RUN gradle build --no-daemon --project-cache-dir /home/gradle/project/.gradle
 
 # Stage 2: Run the app with OpenJDK
 FROM openjdk:17-jdk-slim

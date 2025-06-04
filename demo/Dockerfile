@@ -1,6 +1,9 @@
 # Stage 1: Build Spring Boot app using Gradle
 FROM gradle:8.3.0-jdk17 AS build
 
+# Switch to root so Gradle can write
+USER root
+
 WORKDIR /home/gradle/project
 
 # Copy build files
@@ -8,7 +11,7 @@ COPY demo/build.gradle demo/settings.gradle ./
 COPY demo/src ./src
 
 # Build the application
-RUN gradle build --no-daemon --project-cache-dir /home/gradle/project/.gradle
+RUN gradle build --no-daemon
 
 # Stage 2: Run the app with OpenJDK
 FROM openjdk:17-jdk-slim

@@ -1,25 +1,25 @@
-# Stage 1: Build Spring Boot app using Gradle
-FROM gradle:8.3.0-jdk17 AS build
+# Stage 1: Build with Maven
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Switch to root so Gradle can write
-USER root
+WORKDIR /app
 
-WORKDIR /home/gradle/project
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Copy build files
-COPY demo/build.gradle demo/settings.gradle ./
-COPY demo/src ./src
+# Copy source code
+COPY src ./src
 
-# Build the application
-RUN gradle build --no-daemon
+# Package the application
+RUN mvn clean package -DskipTests
 
-# Stage 2: Run the app with OpenJDK
+# Stage 2: Run the app
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy the jar file from the build stage
-COPY --from=build /home/gradle/project/build/libs/*.jar app.jar
+# Copy the jar from build stage
+COPY --from=build /app/target/*.jar app.jar
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

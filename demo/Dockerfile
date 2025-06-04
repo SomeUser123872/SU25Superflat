@@ -1,11 +1,11 @@
 # Use OpenJDK 17 runtime image
 FROM openjdk:17-jdk-slim
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy built jar file to the image
-COPY build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
+# Copy everything inside demo/ (not root!)
+COPY demo/build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
 
-# Run the jar file
+# Run the jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
